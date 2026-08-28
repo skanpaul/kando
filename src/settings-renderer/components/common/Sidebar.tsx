@@ -35,6 +35,10 @@ export default function Sidebar(props: Props) {
   const resizer = React.useRef<HTMLDivElement>(null);
   const sidebar = React.useRef<HTMLDivElement>(null);
 
+  // Personal build: remember the sidebar's width across restarts, per side, in
+  // localStorage. Kando upstream does not persist this.
+  const widthStorageKey = 'kando-sidebar-width-' + props.position;
+
   React.useEffect(() => {
     // Function to handle the resizing of the sidebar.
     const resize = (e: MouseEvent) => {
@@ -51,6 +55,15 @@ export default function Sidebar(props: Props) {
       document.removeEventListener('mousemove', resize);
       document.removeEventListener('mouseup', stopResize);
       document.body.style.cursor = '';
+
+      try {
+        const width = sidebar.current.style.width;
+        if (width) {
+          localStorage.setItem(widthStorageKey, width);
+        }
+      } catch {
+        // Ignore storage errors (e.g. private browsing contexts).
+      }
     };
 
     // Add event listeners for the resizer. This is done in a useEffect hook to ensure
@@ -61,6 +74,19 @@ export default function Sidebar(props: Props) {
         document.addEventListener('mouseup', stopResize);
         document.body.style.cursor = 'col-resize';
       });
+    }
+
+    // Restore a previously remembered width, clamped so that a width remembered on a
+    // large window stays usable on a smaller one. 250px matches the sheet's min-width.
+    try {
+      const stored = localStorage.getItem(widthStorageKey);
+      const width = stored ? parseFloat(stored) : NaN;
+      if (stored && isFinite(width) && width > 0) {
+        sidebar.current.style.width =
+          Math.max(250, Math.min(width, 0.45 * window.innerWidth)) + 'px';
+      }
+    } catch {
+      // Ignore storage errors (e.g. private browsing contexts).
     }
   }, []);
 
