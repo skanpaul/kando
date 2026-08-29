@@ -57,11 +57,22 @@ export class MacosBackend extends Backend {
     // will be shown for a short moment when the app is started.
     app.dock?.hide();
 
-    // We can get a list of all installed applications on macOS.
+    // We can get a list of all installed applications on macOS. A handful of bundle
+    // names are shared by more than one distinct app (e.g. two Siri.app bundles at
+    // different paths both use "Siri" as their id), so we deduplicate by id here — the
+    // id is used as-is in the "open -a" command below, so entries sharing an id would be
+    // indistinguishable to launch anyway, and leaving duplicates in would give the App
+    // Picker's React list duplicate keys.
+    const seenIds = new Set<string>();
     native
       .listInstalledApplications()
       .sort((a, b) => a.name.localeCompare(b.name))
       .forEach((app) => {
+        if (seenIds.has(app.id)) {
+          return;
+        }
+        seenIds.add(app.id);
+
         this.installedApps.push({
           id: app.id,
           name: app.name,
