@@ -85,15 +85,26 @@ export default function GeneralSettingsDialog() {
   // Widget width
   const spinbuttonWidth = 60;
 
-  // Options for dropdowns
-  const soundThemeOptions = soundThemes.map((theme) => ({
-    value: theme.id,
-    label: theme.name,
-  }));
+  // Options for dropdowns. Themes which failed to load (most likely due to a version
+  // mismatch) are excluded here but are used below to show a warning.
+  const soundThemeOptions = soundThemes
+    .filter((theme) => !theme.loadFailed)
+    .map((theme) => ({
+      value: theme.id,
+      label: theme.name,
+    }));
   soundThemeOptions.unshift({
     value: 'none',
     label: i18next.t('settings.general-settings-dialog.none'),
   });
+
+  const failedSoundThemes = soundThemes.filter((theme) => theme.loadFailed);
+  const soundThemeWarning =
+    failedSoundThemes.length > 0
+      ? i18next.t('settings.general-settings-dialog.sound-theme-load-failed-warning', {
+          themes: failedSoundThemes.map((theme) => theme.name).join(', '),
+        })
+      : undefined;
 
   const localeOptions = cLocales.map((code) => {
     const display = new Intl.DisplayNames([code], { type: 'language' });
@@ -344,6 +355,44 @@ export default function GeneralSettingsDialog() {
             ]}
             settingsKey="sameShortcutBehavior"
           />
+          <h1>{i18next.t('settings.general-settings-dialog.input-options')}</h1>
+          <SettingsCheckbox
+            warning={
+              keepInputFocus
+                ? i18next.t('settings.general-settings-dialog.keep-input-focus-warning')
+                : undefined
+            }
+            info={i18next.t('settings.general-settings-dialog.keep-input-focus-info')}
+            label={i18next.t('settings.general-settings-dialog.keep-input-focus')}
+            settingsKey="keepInputFocus"
+          />
+          <SettingsCheckbox
+            warning={
+              keepInputFocus
+                ? i18next.t('settings.general-settings-dialog.enable-turbo-mode-warning')
+                : undefined
+            }
+            info={i18next.t('settings.general-settings-dialog.hide-on-focus-out-info')}
+            isDisabled={keepInputFocus}
+            label={i18next.t('settings.general-settings-dialog.hide-on-focus-out')}
+            settingsKey="hideOnFocusOut"
+          />
+          <SettingsCheckbox
+            info={i18next.t(
+              'settings.general-settings-dialog.enable-gamepad-support-info'
+            )}
+            label={i18next.t('settings.general-settings-dialog.enable-gamepad-support')}
+            settingsKey="enableGamepad"
+          />
+          {backend.name === 'Windows' && (
+            <SettingsCheckbox
+              info={i18next.t(
+                'settings.general-settings-dialog.windows-ink-workaround-info'
+              )}
+              label={i18next.t('settings.general-settings-dialog.windows-ink-workaround')}
+              settingsKey="windowsInkWorkaround"
+            />
+          )}
           <h1>{i18next.t('settings.general-settings-dialog.interaction-modes')}</h1>
           <SettingsCheckbox
             info={i18next.t('settings.general-settings-dialog.enable-marking-mode-info')}
@@ -389,35 +438,8 @@ export default function GeneralSettingsDialog() {
             )}
             settingsKey="triggerCenterClickOnKeyRelease"
           />
-          <h1>{i18next.t('settings.general-settings-dialog.input-options')}</h1>
-          <SettingsCheckbox
-            warning={
-              keepInputFocus
-                ? i18next.t('settings.general-settings-dialog.keep-input-focus-warning')
-                : undefined
-            }
-            info={i18next.t('settings.general-settings-dialog.keep-input-focus-info')}
-            label={i18next.t('settings.general-settings-dialog.keep-input-focus')}
-            settingsKey="keepInputFocus"
-          />
-          <SettingsCheckbox
-            info={i18next.t(
-              'settings.general-settings-dialog.enable-gamepad-support-info'
-            )}
-            label={i18next.t('settings.general-settings-dialog.enable-gamepad-support')}
-            settingsKey="enableGamepad"
-          />
-          {backend.name === 'Windows' && (
-            <SettingsCheckbox
-              info={i18next.t(
-                'settings.general-settings-dialog.windows-ink-workaround-info'
-              )}
-              label={i18next.t('settings.general-settings-dialog.windows-ink-workaround')}
-              settingsKey="windowsInkWorkaround"
-            />
-          )}
-          <Swirl marginBottom={20} marginTop={40} variant="2" width={350} />
-          <Note isCentered useMarkdown>
+
+          <Note isCentered useMarkdown marginTop={20}>
             {i18next.t('settings.general-settings-dialog.learn-interaction-mode', {
               link: 'https://kando.menu/usage/',
             })}
@@ -435,6 +457,7 @@ export default function GeneralSettingsDialog() {
             maxWidth={200}
             options={soundThemeOptions}
             settingsKey="soundTheme"
+            warning={soundThemeWarning}
           />
           <SettingsSpinbutton
             info={i18next.t('settings.general-settings-dialog.volume-info')}

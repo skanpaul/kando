@@ -44,6 +44,7 @@ The [Unreleased] section contains changes which are not released yet. If you wan
 - Kando now remembers the size, position, maximized state, and sidebar widths of the settings window. Thanks to [@Morax](https://github.com/fzlzjerry) for contributing this feature!
 - Added an option to **trigger the center-click action of the menu on key release**. This is for advanced Turbo-Mode users who want to hide the menu if the shortcut key is released over the center of the menu. 
 - Added an option to **move the mouse pointer back to where it opened the menu** after making a selection. Thanks to [@cocojojo5213](https://github.com/cocojojo5213) for contributing this feature!
+- Added an option to **hide the menu when it looses focus**. This is now enabled by default.
 - It is now possible to **delete menu items by dragging them back into the preview footer area**. Thanks to [@ik2m](https://github.com/ik2m) for looking into this!
 - You can now **disable the animation of menu items**. Thanks to [@Yavuz-Kagan-Yadigar](https://github.com/Yavuz-Kagan-Yadigar) for contributing this feature!
 - Added support for **stylus input on KDE Wayland**. The menu will now open at the position of the pen tip when you use a drawing tablet! 
@@ -54,6 +55,7 @@ The [Unreleased] section contains changes which are not released yet. If you wan
 - It's now possible to **open user-configured menus via the IPC interface**. This allows you to open one of your configured menus by its name. This is similar to the `--menu <menu name>` command-line option, but is faster as it does not require starting a new Kando instance. This is especially useful if you want to open menus from other applications or scripts.
 - Added an option to re-open a menu if the same shortcut is pressed while the menu is already open. This is useful if the menu sometimes gets lost on multi-monitor setups.
 - Added some warning signs in the settings dialog which indicate that a potentially dangerous setting is enabled. For instance, if you enable the keep-focus option, a warning sign will show that this disables all keyboard input.
+- The dialog now also shows a warning if a sound theme failed to load. This can happen if the sound theme is not compatible with the current version of Kando.
 - Many translation updates: **Thanks to all the contributors!**
 
 ### :wrench: Changed
