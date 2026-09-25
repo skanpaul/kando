@@ -17,6 +17,9 @@ export const mainConfig: Configuration = {
     rules,
   },
   externals: ignores,
+  // The asset relocator loader injects __webpack_require__.ab only when it runs. With the
+  // cache, watch-mode rebuilds skip it and the native module path becomes "undefined".
+  cache: false,
   resolve: {
     extensions: ['.js', '.ts', '.jsx', '.tsx', '.css', '.json'],
   },
