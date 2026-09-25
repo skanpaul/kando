@@ -130,7 +130,7 @@ const config: ForgeConfig = {
   packagerConfig: {
     // https://electron.github.io/packager/main/interfaces/Options.html
     icon: 'assets/icons/icon',
-    name: 'Kando',
+    name: 'Kando Sorakann 3.x',
 
     // This makes sure that the app is not shown in the dock on macOS.
     extendInfo: {
